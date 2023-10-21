@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Verification</title>
+    <script>
+        function auth(event) {
+            event.preventDefault();
+
+            // Retrieve the OTP entered by the user
+            var otp1 = document.getElementById("1").value;
+            var otp2 = document.getElementById("2").value;
+            var otp3 = document.getElementById("3").value;
+            var otp4 = document.getElementById("4").value;
+            var otp5 = document.getElementById("5").value;
+            var otp6 = document.getElementById("6").value;
+
+            // Construct the user object using cookies
+            
+
+            const uid = localStorage.getItem('uid');
+            const name = localStorage.getItem('name');
+            const userTypes = localStorage.getItem('userType');
+            console.log(userTypes);
+            
+
+            // Construct the JSON object with user data
+            const userData = {
+                uid: uid,
+                name: name,
+                otp: otp1 + otp2 + otp3 + otp4 + otp5 + otp6,
+            };
+
+            // Convert userData to a JSON string
+            const userDataString = JSON.stringify(userData);
+            console.log(userDataString);
+
+            // Assuming you have an API endpoint for verification
+            fetch("http://127.0.0.1:8000/auth/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: userDataString
+            })
+                .then(response => response.text())
+                .then(data => {
+                    const jsonData = JSON.parse(data);
+                    console.log(jsonData.auth);
+                    if (jsonData.auth === "y") {
+                        var userType = new URLSearchParams(window.location.search).get("user");
+                        console.log(userType);
+
+                        if (localStorage.getItem('userType') === "Patient") {
+                            window.location.replace("./viewp.html");
+                        } else if (localStorage.getItem('userType') === "Doctor") {
+                            window.location.replace("./Diagnose.html");
+                        } else {
+                            alert("Invalid user type.");
+                        }
+                    } else {
+                        alert("Login failed. Please check your OTP.");
+                    }
+                });
+
+        }
+
+        // Function to get a cookie value by name
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
+    </script>
+
+</head>
+</head>
+
+<body>
+    <div class="split left">
+        <h1>HealthChain</h1>
+    </div>
+    <div class="split right">
+        <div class="container">
+            <h2>Verification</h2>
+            <form action="post">
+                <p>
+                    We have sent a six digit code to your registered phone number. <br>Enter the code below to
+                    complete the verification.
+                </p>
+
+                <div class="code-container">
+                    <input type="number" name="1" id="1" class="code" placeholder="0" min="0" max="9" required>
+                    <input type="number" name="2" id="2" class="code" placeholder="0" min="0" max="9" required>
+                    <input type="number" name="3" id="3" class="code" placeholder="0" min="0" max="9" required>
+                    <input type="number" name="4" id="4" class="code" placeholder="0" min="0" max="9" required>
+                    <input type="number" name="5" id="5" class="code" placeholder="0" min="0" max="9" required>
+                    <input type="number" name="6" id="6" class="code" placeholder="0" min="0" max="9" required>
+                </div>
+                <div>
+                    <button type="submit" onclick="auth(event)" class="ver">Verify</button>
+                </div>
+                <div class="res">
+                    <small>
+                        Didn't receive the code?<a href="#"> RESEND</a>
+                    </small>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const codes = document.querySelectorAll('.code')
+
+        codes[0].focus()
+
+        codes.forEach((code, idx) => {
+            code.addEventListener('keydown', (e) => {
+                if (e.key >= 0 && e.key <= 9) {
+                    codes[idx].value = ''
+                    setTimeout(() => codes[idx + 1].focus(), 10)
+                } else if (e.key === 'Backspace') {
+                    setTimeout(() => codes[idx - 1].focus(), 10)
+                }
+            })
+        })
+    </script>
+</body>
+
+</html>

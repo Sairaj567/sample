@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Doctor_view</title>
+</head>
+
+
+ <body>
+    <header>
+        <h2>HealthChain</h2>
+        <nav class="navigation">
+            <a href="about.html">About</a>
+            <a href="#" onclick="toggleMenu()">Profile</a>
+
+            <div class="sub-menu-wrap" id="subMenu">
+                <div class="sub-menu">
+                    <div class="user-info">
+                        <h3>Doctor Name</h3>
+                    </div>
+                    <hr>
+
+                    <a href="#" class="sub-menu-link">
+                        <p>Your Profile</p>
+                        <span>></span>
+                    </a>
+                    <a href="#" class="sub-menu-link">
+                        <p>Diagnose Patient</p>
+                        <span>></span>
+                    </a>
+                    <a href="#" class="sub-menu-link">
+                        <p>Patient Records</p>
+                        <span>></span>
+                    </a>
+                    <a href="#" class="sub-menu-link">
+                        <p>Logout</p>
+                        <span>></span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="display-info">
+        <h2>Patient Details</h2>
+        <hr>
+        <div class="patient-info">
+            <label>
+                UID:
+                <span id="patientName"></span>
+            </label>
+            <br>
+            <label>
+                Date :
+                <span id="date"></span>
+            </label>
+            <br>
+            <label>
+                Symptoms :
+                <span id="symptoms"></span>
+            </label>
+            <br>
+            <label>
+                Diagnosed with :
+                <span id="diagnosis"></span>
+            </label>
+            <br>
+            <label>
+                Prescription :
+                <span id="prescription"></span>
+            </label>
+        </div>
+        <a href="ADD.html">
+            <button type="submit" class="add">Add</button>
+        </a>
+    </div>
+
+
+
+    <script>
+        const uid = localStorage.getItem('uid');
+        const skey = localStorage.getItem('skey');
+        const userData = {
+            uid: uid,
+            skey: skey
+        };
+    
+        // Convert userData to a JSON string
+        const userDataString = JSON.stringify(userData);
+        //console.log(userDataString);
+    
+        // Assuming you have an API endpoint for verification
+        fetch("http://127.0.0.1:8000/getpres/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: userDataString
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // Logging the JSON response
+            console.log(data.name);
+            const pdata = data.data[0];
+            document.getElementById("patientName").innerHTML = pdata.name;
+            document.getElementById("date").innerHTML = pdata.visitdate;
+            document.getElementById("symptoms").innerHTML = pdata.symp;
+            document.getElementById("diagnosis").innerHTML = pdata.diag;
+            document.getElementById("prescription").innerHTML = pdata.pres;
+        });
+    </script>
+    
+    </body>
+    
+    </html>

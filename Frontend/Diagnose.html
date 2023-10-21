@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Diagnose</title>
+    <script>
+
+function auth(event) {
+  event.preventDefault();
+  var username = document.getElementById("username").value;
+  var aadhaaruser = document.getElementById("aadhaar").value;
+
+  var otp1 = document.getElementById("1").value;
+  var otp2 = document.getElementById("2").value;
+  var otp3 = document.getElementById("3").value;
+  var otp4 = document.getElementById("4").value;
+  var otp5 = document.getElementById("5").value;
+  var otp6 = document.getElementById("6").value;
+
+  localStorage.setItem('uid', aadhaaruser);
+  localStorage.setItem('name', username);
+
+  // Construct the JSON object with user data
+  const userData = {
+    uid: aadhaaruser,
+    name: username,
+    otp: otp1 + otp2 + otp3 + otp4 + otp5 + otp6,
+  };
+
+  // Convert userData to a JSON string
+  const userDataString = JSON.stringify(userData);
+  console.log(userDataString);
+
+  fetch("http://127.0.0.1:8000/auth/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: userDataString
+  })
+    .then(response => response.text())
+    .then(data => {
+      const jsonData = JSON.parse(data);
+      console.log(jsonData.auth);
+      console.log(jsonData.skey);
+      localStorage.setItem('skey', jsonData.skey);
+
+      if (jsonData.auth === "y") {
+        var userType = new URLSearchParams(window.location.search).get("user");
+        console.log(userType);
+        window.location.replace("./viewd.html");
+      } else {
+        alert("Login failed. Please check your OTP.");
+      }
+    });
+}
+
+    </script>
+</head>
+
+<body>
+    <header>
+        <h2>HealthChain</h2>
+        <nav class="navigation">
+            <a href="about.html">About</a>
+            <a href="#" onclick="toggleMenu()">Profile</a>
+
+            <div class="sub-menu-wrap" id="subMenu">
+                <div class="sub-menu">
+                    <div class="user-info">
+                        <h3>Doctor Name</h3>
+                    </div>
+                    <hr>
+
+                    <a href="#" class="sub-menu-link">
+                        <p>Your Profile</p>
+                        <span>></span>
+                    </a>
+                    <a href="#" class="sub-menu-link">
+                        <p>Diagnose Patient</p>
+                        <span>></span>
+                    </a>
+                    <a href="#" class="sub-menu-link">
+                        <p>Patient Records</p>
+                        <span>></span>
+                    </a>
+                    <a href="#" class="sub-menu-link">
+                        <p>Logout</p>
+                        <span>></span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="split left">
+        <h1>Diagnose Patient</h1>
+    </div>
+    <div class="split right">
+        <div class="container">
+            <div class="form-box login">
+                <h2>Diagnose</h2>
+                <form action="post">
+                    <div class="input-box">
+                        <span class="icon"><ion-icon name="person"></ion-icon></span>
+                        <input type="text" name="username" id="username" required><br>
+                        <label>Name as per Aadhaar</label>
+                    </div>
+                    <div class="input-box">
+                        <span class="icon"><ion-icon name="key"></ion-icon></span>
+                        <input type="text" name="aadhaar" id="aadhaar" required>
+                        <label>Aadhaar Number (UID)</label>
+                    </div>
+                    <button type="submit" class="otp" >Send OTP</button>
+
+                    <div class="code-container">
+                        <input type="number" name="1" id="1" class="code" placeholder="0" min="0" max="9" required>
+                        <input type="number" name="2" id="2" class="code" placeholder="0" min="0" max="9" required>
+                        <input type="number" name="3" id="3" class="code" placeholder="0" min="0" max="9" required>
+                        <input type="number" name="4" id="4" class="code" placeholder="0" min="0" max="9" required>
+                        <input type="number" name="5" id="5" class="code" placeholder="0" min="0" max="9" required>
+                        <input type="number" name="6" id="6" class="code" placeholder="0" min="0" max="9" required>
+                    </div>
+                    <div>
+                        <button type="submit" onclick="auth(event)" class="ver">Verify</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let subMenu = document.getElementById("subMenu");
+
+        function toggleMenu() {
+            subMenu.classList.toggle("open-menu");
+        }
+
+        const codes = document.querySelectorAll('.code')
+
+        codes[0].focus()
+
+        codes.forEach((code, idx) => {
+            code.addEventListener('keydown', (e) => {
+                if (e.key >= 0 && e.key <= 9) {
+                    codes[idx].value = ''
+                    setTimeout(() => codes[idx + 1].focus(), 10)
+                } else if (e.key === 'Backspace') {
+                    setTimeout(() => codes[idx - 1].focus(), 10)
+                }
+            })
+        })
+    </script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>ADD</title>
+</head>
+
+<body>
+    <header>
+        <h2>HealthChain</h2>
+        <nav class="navigation">
+            <a href="about.html">About</a>
+            <a href="#" onclick="toggleMenu()">Profile</a>
+
+            <div class="sub-menu-wrap" id="subMenu">
+                <div class="sub-menu">
+                    <div class="user-info">
+                        <h3>Doctor Name</h3>
+                    </div>
+                    <hr>
+
+                    <a href="#" class="sub-menu-link">
+                        <p>Your Profile</p>
+                        <span>></span>
+                    </a>
+                    <a href="#" class="sub-menu-link">
+                        <p>Diagnose Patient</p>
+                        <span>></span>
+                    </a>
+                    <a href="#" class="sub-menu-link">
+                        <p>Patient Records</p>
+                        <span>></span>
+                    </a>
+                    <a href="#" class="sub-menu-link">
+                        <p>Logout</p>
+                        <span>></span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="diagnose">
+        <h2>Diagnose Patient</h2>
+        <hr>
+        <div class="pd">
+            <label>
+                Patient Name:
+            </label>
+            <br>
+            <label>
+                Date:
+                <input type="text" id="dateInput" placeholder="Enter Date">
+            </label>
+            <br>
+            <label>
+                Diagnosed with:
+                <input type="text" id="diagnosedInput" placeholder="Diagnosed with">
+            </label>
+            <br>
+            <label>
+                Prescription:
+                <input type="text" id="prescriptionInput" placeholder="Prescription">
+            </label>
+            <br>
+
+            <button type="submit" class="save" onclick="saveDiagnosis()">Save</button>
+        </div>
+
+    </div>
+
+    <script>
+        let subMenu = document.getElementById("subMenu");
+
+        function toggleMenu() {
+            subMenu.classList.toggle("open-menu");
+        }
+
+        function saveDiagnosis() {
+            const date = document.getElementById("dateInput").value;
+            const diagnosedWith = document.getElementById("diagnosedInput").value;
+            const prescription = document.getElementById("prescriptionInput").value;
+
+            // Prepare the data to send to your API
+            const diagnosisData = {
+                skey: localStorage.getItem("skey"),
+                uid: localStorage.getItem("uid"),
+                name: localStorage.getItem("name"),
+                pres: prescription,
+                diag: diagnosedWith,
+                vdate: date
+            };
+
+            const userDataString = JSON.stringify(diagnosisData);
+            console.log(userDataString);
+
+            // Make an API request to save the diagnosis data
+            fetch("http://127.0.0.1:8000/createpres/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: userDataString
+            })
+                .then(response => response.text())
+                .then(data => {
+                    const jsonData = JSON.parse(data);
+                    console.log(jsonData.isertion);
+
+                    if (jsonData.isertion === "y") {
+                        alert("Diagnosis saved successfully.")
+                        window.location.replace("./Diagnose.html");
+                    }
+                });
+
+        }
+        
+        document.getElementById("patientName").innerHTML = localStorage.getItem("name");
+        console.log(localStorage.getItem("name"));
+    </script>
+
+</body>
+
+</html>

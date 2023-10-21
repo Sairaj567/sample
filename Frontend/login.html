@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Login</title>
+    <script>
+        function auth(event) {
+            event.preventDefault();
+            var username = document.getElementById("username").value;
+            var aadhaar = document.getElementById("aadhaar").value;
+            var userType = document.querySelector('input[name="choice1"]:checked');
+           
+    
+            localStorage.setItem('uid', aadhaar);
+            localStorage.setItem('name', username);
+            localStorage.setItem('userType', userType.value);
+            window.location.replace("./otp.html");
+
+            console.log(userType.value);
+            
+            
+            
+        }
+        
+    
+    </script>
+</head>
+
+<body>
+    <div class="split left">
+        <h1>HealthChain</h1>
+    </div>
+    <div class="split right">
+        <div class="wrapper">
+            <div class="form-box login">
+                <h2>Login</h2>
+                <form action="post">
+                    <div class="input-box">
+                        <span class="icon"><ion-icon name="person"></ion-icon></span>
+                        <input type="text" name="username" id="username" required><br>
+                        <label>Name as per Aadhaar</label>
+                    </div>
+                    <div class="input-box">
+                        <span class="icon"><ion-icon name="key"></ion-icon></span>
+                        <input type="text" name="aadhaar" id="aadhaar" required>
+                        <label>Aadhaar Number (UID)</label>
+                    </div>
+
+
+                    <div class="usertype">
+                        <label class="radio-button"><input type="radio" class="radio-button__input" id="choice1"
+                                name="choice1" value="Doctor">
+                            <span class="radio-button__control"></span>
+                            <span class="radio-button__label"> Doctor</span>
+                        </label>
+                    </div>
+                    <div class="usertype">
+                        <label class="radio-button"><input type="radio" class="radio-button__input" id="choice1"
+                                name="choice1" value="Patient">
+                            <span class="radio-button__control"></span>
+                            <span class="radio-button__label"> Patient</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="otp" onclick="auth(event)">Send OTP</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const formEl = document.querySelector('.form');
+
+        formEl.addEventListener('submit', event => {
+            event.preventDefault();
+
+            const formData = new FormData(formEl);
+            const data = Object.fromEntries(formData);
+
+            console.log(data);
+        });
+    </script>
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+
+</html>
